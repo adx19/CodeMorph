@@ -59,11 +59,20 @@ async function handleConversion(
     let converted: string;
 
     try {
-      converted = await convertWithAI(
-        sourceCode,
-        fromExt,
-        toExt,
-        addComments === "Yes"
+      converted = await vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: "CodeMorph is converting your code...",
+          cancellable: false,
+        },
+        async () => {
+          return await convertWithAI(
+            sourceCode,
+            fromExt,
+            toExt,
+            addComments === "Yes"
+          );
+        }
       );
     } catch (err: any) {
       vscode.window.showErrorMessage(
@@ -128,11 +137,8 @@ ${code}
   const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
   if (!text) {
-    throw new Error(
-        'AI did not return valid convertible code. Try again.'
-    );
-}
-
+    throw new Error("AI did not return valid convertible code. Try again.");
+  }
 
   return stripMarkdown(text);
 }

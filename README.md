@@ -1,71 +1,58 @@
-# CodeMorph README
+# CodeMorph
 
-This is the README for your extension "CodeMorph". After writing up a brief description, we recommend including the following sections.
+CodeMorph is a VS Code extension that automatically converts code when you rename a file to a different language.
 
-## Features
+### ✨ Currently supported (v1)
+- Java ↔ Python
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+More languages coming soon.
 
 ---
 
-## Following extension guidelines
+## 🚀 How it works
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+1. Create or open a file (e.g. `Example.java`)
+2. Rename it to another language (e.g. `Example.py`)
+3. Confirm conversion
+4. Done ✅
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+CodeMorph handles the rest.
 
-## Working with Markdown
+---
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+## 🔐 Safety & Trust
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+- Conversion only happens after explicit confirmation
+- Original file can always be restored using **Undo**
+- No file is changed if conversion fails
 
-## For more information
+---
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+## ⚙️ Setup (Required)
 
-**Enjoy!**
+CodeMorph uses Google Gemini.
+
+1. Get a Gemini API key
+2. Open **Settings → CodeMorph**
+3. Paste the key into `codemorph.geminiApiKey`
+
+---
+
+## 📌 Notes
+
+- v1 is completely free
+- Designed to be safe, simple, and non-destructive
+- Best for learning, interviews, and quick language switches
+
+---
+
+## 🧭 Roadmap
+
+- More languages
+- Diff preview
+- Migration modes
+- Pro features (optional)
+
+---
+
+Built with ❤️ for developers.
