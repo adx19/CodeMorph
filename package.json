@@ -9,15 +9,11 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "*"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "CodeMorph.helloWorld",
-        "title": "Hello World"
-      }
-    ],
     "configuration": {
       "title": "CodeMorph",
       "properties": {
