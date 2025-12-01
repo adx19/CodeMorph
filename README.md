@@ -10,6 +10,7 @@ CodeMorph is a VS Code extension that converts code between languages automatica
 CodeMorph is currently in **early testing (pre-release)**.
 
 The core conversion workflow is functional, but we are actively testing and improving:
+
 - conversion accuracy
 - edge cases
 - UX clarity
@@ -31,23 +32,6 @@ Simple, fast, and native to your workflow.
 
 ## ✅ Supported Conversions (v1)
 
-- Java ↔ Python
+- Java ↔ Python  
 
 (More languages planned in future versions.)
-
----
-
-## 🧪 How to Test CodeMorph
-
-### Prerequisites
-- VS Code (latest stable)
-- Node.js (v18+ recommended)
-- Git installed
-
----
-
-### Step 1: Clone the repository
-```bash
-git clone https://github.com/adx19/CodeMorph.git
-cd CodeMorph
-npm install
