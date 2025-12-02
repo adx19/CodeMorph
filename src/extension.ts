@@ -105,8 +105,9 @@ async function convertWithAI(
   withComments: boolean
 ): Promise<string> {
   const apiKey = vscode.workspace
-    .getConfiguration("codemorph")
-    .get<string>("geminiApiKey");
+  .getConfiguration("codemorph")
+  .get<string>("geminiApiKey");
+
 
   if (!apiKey) {
     throw new Error("Gemini API key not set (Settings → CodeMorph)");
