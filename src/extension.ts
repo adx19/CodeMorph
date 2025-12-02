@@ -1,4 +1,6 @@
 import * as vscode from "vscode";
+import { EXTENSION_LANGUAGE_MAP, Language } from "./languages";
+import { ALLOWED_CONVERSIONS } from "./conversions";
 
 export function activate(context: vscode.ExtensionContext) {
   console.log("CodeMorph activated");
@@ -13,7 +15,11 @@ export function activate(context: vscode.ExtensionContext) {
         if (!fromExt || !toExt || fromExt === toExt) continue;
         if (!isSupportedConversion(fromExt, toExt)) continue;
 
-        await handleConversion(file.newUri, fromExt, toExt);
+        await handleConversion(
+          file.newUri,
+          EXTENSION_LANGUAGE_MAP[fromExt],
+          EXTENSION_LANGUAGE_MAP[toExt]
+        );
       }
     })
   );
@@ -24,13 +30,19 @@ function getExtension(uri: vscode.Uri): string | null {
   return parts.length > 1 ? parts.pop()!.toLowerCase() : null;
 }
 
-function isSupportedConversion(from: string, to: string): boolean {
-  return (from === "java" && to === "py") || (from === "py" && to === "java");
+function isSupportedConversion(fromExt: string, toExt: string): boolean {
+  const fromLang = EXTENSION_LANGUAGE_MAP[fromExt];
+  const toLang = EXTENSION_LANGUAGE_MAP[toExt];
+
+  if (!fromLang || !toLang) return false;
+
+  return ALLOWED_CONVERSIONS[fromLang]?.includes(toLang) ?? false;
 }
+
 async function handleConversion(
   fileUri: vscode.Uri,
-  fromExt: string,
-  toExt: string
+  fromLang: Language,
+  toLang: Language
 ) {
   try {
     const bytes = await vscode.workspace.fs.readFile(fileUri);
@@ -42,7 +54,7 @@ async function handleConversion(
     }
 
     const choice = await vscode.window.showInformationMessage(
-      `Convert ${fromExt.toUpperCase()} → ${toExt.toUpperCase()} with CodeMorph?`,
+      `Convert ${fromLang.toUpperCase()} → ${toLang.toUpperCase()} with CodeMorph?`,
       { modal: true },
       "Convert",
       "Cancel"
@@ -68,8 +80,8 @@ async function handleConversion(
         async () => {
           return await convertWithAI(
             sourceCode,
-            fromExt,
-            toExt,
+            fromLang,
+            toLang,
             addComments === "Yes"
           );
         }
@@ -100,14 +112,14 @@ async function handleConversion(
 
 async function convertWithAI(
   code: string,
-  from: string,
-  to: string,
+  from: Language,
+  to: Language,
   withComments: boolean
 ): Promise<string> {
-  const apiKey = vscode.workspace
-  .getConfiguration("codemorph")
-  .get<string>("geminiApiKey");
 
+  const apiKey = vscode.workspace
+    .getConfiguration("codemorph")
+    .get<string>("geminiApiKey");
 
   if (!apiKey) {
     throw new Error("Gemini API key not set (Settings → CodeMorph)");
