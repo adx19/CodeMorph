@@ -144,7 +144,11 @@ ${code}
       "Content-Type": "application/json",
       Authorization: `Bearer ${authToken}`,
     },
-    body: JSON.stringify({ prompt }),
+    body: JSON.stringify({ 
+      prompt, 
+      fromLang: from,
+      toLang: to
+    }),
   });
 
   const data: any = await response.json();

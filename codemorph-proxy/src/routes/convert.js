@@ -1,17 +1,42 @@
 import express from "express";
 import { pool } from "../db.js";
 import { generateResponse } from "../utils/gemini.js";
-import { apiKeyMiddleware } from '../auth.js';
-
+import { apiKeyMiddleware } from "../auth.js";
 
 const router = express.Router();
 
+const FREE_LANGUAGES = [
+  "python",
+  "java",
+  "javascript",
+  "cpp",
+  "c",
+  "typescript",
+];
 router.post("/", apiKeyMiddleware, async (req, res) => {
   const userId = req.user.id;
-  const { prompt } = req.body;
+  const { prompt, fromLang, toLang } = req.body;
 
   if (!prompt) {
     return res.status(400).json({ message: "missing_prompt" });
+  }
+
+  if (!fromLang || !toLang) {
+    return res.status(400).json({ message: "missing_language_info" });
+  }
+  const [userRows] = await pool.query(
+    "SELECT is_paid FROM users WHERE id = ?",
+    [userId]
+  );
+
+  const isPaid = userRows[0]?.is_paid === 1;
+
+  if (isPaid) {
+    const allowed = FREE_LANGUAGES;
+
+    if (!allowed.includes(fromLang) || !allowed.includes(toLang)) {
+      return res.status(403).json({ message: "upgrade_required" });
+    }
   }
 
   const conn = await pool.getConnection();
@@ -69,7 +94,6 @@ router.post("/", apiKeyMiddleware, async (req, res) => {
     const reply = await generateResponse(prompt);
 
     res.json({ reply });
-
   } catch (err) {
     await conn.rollback();
 
@@ -79,11 +103,9 @@ router.post("/", apiKeyMiddleware, async (req, res) => {
 
     console.error(err);
     res.status(500).json({ message: "convert_failed" });
-
   } finally {
     conn.release();
   }
 });
-
 
 export default router;
