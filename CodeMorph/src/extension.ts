@@ -116,13 +116,17 @@ async function convertWithAI(
   to: Language,
   withComments: boolean
 ): Promise<string> {
+  const config = vscode.workspace.getConfiguration("codemorph");
 
-  const apiKey = vscode.workspace
-    .getConfiguration("codemorph")
-    .get<string>("geminiApiKey");
+  // For now, reuse this setting as "CodeMorph auth token" (JWT)
+  const authToken = config.get<string>("geminiApiKey");
+  const backendUrl =
+    config.get<string>("backendUrl") || "http://localhost:5000";
 
-  if (!apiKey) {
-    throw new Error("Gemini API key not set (Settings → CodeMorph)");
+  if (!authToken) {
+    throw new Error(
+      "CodeMorph auth token not set (Settings → CodeMorph → geminiApiKey)."
+    );
   }
 
   const prompt = `
@@ -134,27 +138,30 @@ CODE:
 ${code}
 `;
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-      }),
-    }
-  );
+  const response = await fetch(`${backendUrl}/convert`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${authToken}`,
+    },
+    body: JSON.stringify({ prompt }),
+  });
 
   const data: any = await response.json();
 
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!response.ok) {
+    throw new Error(data?.message || "CodeMorph proxy conversion failed.");
+  }
+
+  const text = data?.reply;
 
   if (!text) {
-    throw new Error("AI did not return valid convertible code. Try again.");
+    throw new Error("CodeMorph did not return valid convertible code. Try again.");
   }
 
   return stripMarkdown(text);
 }
+
 
 function stripMarkdown(code: string): string {
   return code

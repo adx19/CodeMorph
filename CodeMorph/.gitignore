@@ -1,0 +1,19 @@
+# build output
+out
+dist
+
+# dependencies
+node_modules
+
+# VS Code test
+.vscode-test/
+
+# packaged extensions
+*.vsix
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# environment / secrets (future safety)
+.env
